@@ -1,0 +1,149 @@
+﻿<mat-card class="search-card">
+  <mat-card-content>
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+      <mat-tab-group class="search-tabs" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Especialidade</span>
+          </ng-template>
+
+          <div class="tab-content">
+            <mat-form-field class="filter-field required full-width">
+              <mat-label>Plano</mat-label>
+              <mat-select formControlName="plan">
+                <mat-option value="">Selecione o plano</mat-option>
+                <mat-option *ngFor="let plan of filterOptions.plans" [value]="plan">
+                  {{ plan }}
+                </mat-option>
+              </mat-select>
+              <mat-error class="required-hint" *ngIf="searchForm.get('plan')?.touched && searchForm.get('plan')?.hasError('required')">
+                {{ getErrorMessage('plan') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="filter-field required full-width" [class.locked-field]="!isPlanSelected">
+              <mat-label>Localizacao</mat-label>
+              <mat-select formControlName="locationType" [disabled]="!isPlanSelected" (selectionChange)="onLocationTypeChange($event)">
+                <mat-option value="">Selecione uma opcao</mat-option>
+                <mat-option value="nearby">Mais proximos (Usar localizacao)</mat-option>
+                <mat-option value="manual">Selecionar Estado, Cidade e Bairro</mat-option>
+              </mat-select>
+              <mat-error class="required-hint" *ngIf="searchForm.get('locationType')?.touched && searchForm.get('locationType')?.hasError('required')">
+                {{ getErrorMessage('locationType') }}
+              </mat-error>
+            </mat-form-field>
+
+            <div class="location-success" *ngIf="searchForm.get('locationType')?.value === 'nearby' && searchForm.get('latitude')?.value">
+              <mat-icon>check_circle</mat-icon>
+              <span>Localizacao obtida com sucesso</span>
+            </div>
+
+            <div class="location-loading" *ngIf="loading && searchForm.get('locationType')?.value === 'nearby'">
+              <mat-icon>location_searching</mat-icon>
+              <span>Buscando sua localizacao...</span>
+            </div>
+
+            <div *ngIf="showLocationDetails" class="filter-row-pair">
+              <mat-form-field class="filter-field required">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="state">
+                  <mat-option value="">Todos</mat-option>
+                  <mat-option value="DF">DF</mat-option>
+                  <mat-option value="SP">SP</mat-option>
+                  <mat-option value="RJ">RJ</mat-option>
+                  <mat-option value="MG">MG</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="filter-field required">
+                <mat-label>Cidade</mat-label>
+                <mat-select formControlName="city">
+                  <mat-option value="">Todos</mat-option>
+                  <mat-option *ngFor="let city of filterOptions.cities" [value]="city">
+                    {{ city }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div *ngIf="showLocationDetails" class="filter-row-pair">
+              <mat-form-field class="filter-field">
+                <mat-label>Bairro</mat-label>
+                <mat-select formControlName="neighborhood">
+                  <mat-option value="">Todos</mat-option>
+                  <mat-option *ngFor="let neighborhood of filterOptions.neighborhoods" [value]="neighborhood">
+                    {{ neighborhood }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div></div>
+            </div>
+
+            <div class="validation-error" *ngIf="searchForm.hasError('locationRequired') && searchForm.touched">
+              <mat-icon>error</mat-icon>
+              {{ getErrorMessage('') }}
+            </div>
+
+            <mat-form-field class="filter-field full-width" [class.locked-field]="!isLocationDefined">
+              <mat-label>Tipo prestador</mat-label>
+              <mat-select formControlName="type" [disabled]="!isLocationDefined">
+                <mat-option value="">Todos</mat-option>
+                <mat-option *ngFor="let type of filterOptions.types" [value]="type">
+                  {{ formatTypeName(type) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="filter-field full-width" [class.locked-field]="!isLocationDefined">
+              <mat-label>Especialidade</mat-label>
+              <mat-select formControlName="specialty" [disabled]="!isLocationDefined">
+                <mat-option value="">Todas as especialidades</mat-option>
+                <mat-option *ngFor="let specialty of filterOptions.specialties" [value]="specialty">
+                  {{ specialty }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="validation-error" *ngIf="searchForm.hasError('typeOrSpecialtyRequired') && searchForm.touched">
+              <mat-icon>error</mat-icon>
+              {{ getErrorMessage('') }}
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">Nome</span>
+          </ng-template>
+
+          <div class="tab-content tab-content-name">
+            <mat-form-field class="filter-field required full-width">
+              <mat-label>Plano</mat-label>
+              <mat-select formControlName="plan">
+                <mat-option value="">Selecione o plano</mat-option>
+                <mat-option *ngFor="let plan of filterOptions.plans" [value]="plan">
+                  {{ plan }}
+                </mat-option>
+              </mat-select>
+              <mat-error class="required-hint" *ngIf="searchForm.get('plan')?.touched && searchForm.get('plan')?.hasError('required')">
+                {{ getErrorMessage('plan') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="filter-field required full-width" [class.locked-field]="!isPlanSelected">
+              <mat-label>Nome</mat-label>
+              <input matInput formControlName="name" placeholder="Digite o nome">
+            </mat-form-field>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+      <div class="actions-section">
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading || !canSearchByTypeOrSpecialty" class="pesquisar-btn">
+          PESQUISAR
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
