@@ -1,0 +1,97 @@
+<div class="provider-list-container">
+  <!-- Cabeçalho com resultados e controles -->
+  <div class="list-header" *ngIf="hasResults && !loading">
+    <div class="header-left">
+      <h2 class="results-title">Resultados da busca ({{ totalResults }})</h2>
+      <button mat-button class="map-view-btn">
+        <mat-icon>map</mat-icon>
+        VER NO MAPA
+      </button>
+    </div>
+    
+    <div class="header-controls">
+      <div class="filter-controls">
+        <button mat-button class="filter-btn">
+          <mat-icon>tune</mat-icon>
+          Filtros
+        </button>
+      </div>
+      
+      <div class="sort-controls">
+        <button mat-button class="sort-btn">
+          <mat-icon>sort</mat-icon>
+          Ordenar por
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicador de carregamento -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Buscando prestadores...</p>
+  </div>
+
+  <!-- Lista de prestadores -->
+  <div class="providers-list" *ngIf="hasResults && !loading">
+    <div 
+      *ngFor="let provider of searchResponse?.providers; trackBy: trackByProviderId"
+      class="provider-item"
+      (click)="selectProvider(provider)">
+      
+      <div class="provider-main-info">
+        <h3 class="provider-name">{{ provider.name }}</h3>
+        
+        <div class="provider-specialties">
+          {{ getSpecialtiesText(provider) }}
+        </div>
+        
+        <div class="provider-address">
+          <mat-icon class="address-icon">location_on</mat-icon>
+          <span class="address-text">{{ getFullAddress(provider) }}</span>
+          <span class="distance" *ngIf="getProviderDistance(provider)">
+            {{ getProviderDistance(provider) }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="provider-contacts">
+        <div class="phone-info" *ngIf="provider.contact.phone">
+          {{ provider.contact.phone }}
+        </div>
+        <div class="phone-info" *ngIf="provider.contact.whatsapp">
+          {{ provider.contact.whatsapp }}
+        </div>
+        <div class="whatsapp-label" *ngIf="provider.contact.whatsapp">
+          WHATSAPP (61)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensagem de nenhum resultado -->
+  <div class="no-results" *ngIf="!hasResults && !loading && searchResponse">
+    <mat-icon class="no-results-icon">search_off</mat-icon>
+    <h3>Nenhum prestador encontrado</h3>
+    <p>Tente ajustar os filtros de busca para encontrar mais resultados.</p>
+  </div>
+
+  <!-- Mensagem de estado inicial -->
+  <div class="initial-state" *ngIf="!searchResponse && !loading">
+    <mat-icon class="search-icon">search</mat-icon>
+    <h3>Realize uma busca</h3>
+    <p>Utilize os filtros ao lado para encontrar prestadores de saúde em sua região.</p>
+  </div>
+
+  <!-- Paginação -->
+  <div class="pagination-container" *ngIf="hasResults && !loading">
+    <mat-paginator
+      [length]="searchResponse?.pagination?.total || 0"
+      [pageSize]="searchResponse?.pagination?.limit || 10"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      [pageIndex]="(searchResponse?.pagination?.page || 1) - 1"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>
