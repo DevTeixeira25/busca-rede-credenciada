@@ -1,0 +1,74 @@
+<!-- Header/Toolbar -->
+<mat-toolbar color="primary" class="app-toolbar">
+  <div class="toolbar-content">
+    <div class="logo-section">
+      <mat-icon class="logo-icon">local_hospital</mat-icon>
+      <span class="app-title">{{ title() }}</span>
+    </div>
+    
+    <div class="toolbar-actions">
+      <button mat-icon-button [title]="'Sobre o sistema'">
+        <mat-icon>info</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Main Content -->
+<main class="app-content">
+  <div class="floating-card">
+    <!-- Coluna Esquerda: Nova Busca -->
+    <aside class="search-sidebar">
+    <div class="search-header">
+      <h1>Busca de Rede credenciada</h1>
+    </div>
+    <div class="search-header-secondary">
+      <h3>Nova busca</h3>
+    </div>
+    <app-search-form 
+      (searchEvent)="onSearch($event)"
+      (providerSelected)="onProviderSelected($event)">
+    </app-search-form>
+  </aside>
+
+  <!-- Coluna Direita: Resultados ou Detalhes -->
+  <section class="content-area">
+    <!-- Detalhes do Prestador -->
+    <div *ngIf="selectedProvider" class="provider-details">
+      <div class="details-header">
+        <button mat-icon-button (click)="backToResults()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h2>{{ selectedProvider.name }}</h2>
+        <button mat-button class="close-button" (click)="backToResults()">FECHAR</button>
+      </div>
+      <app-provider-details 
+        [provider]="selectedProvider"
+        (back)="backToResults()">
+      </app-provider-details>
+    </div>
+
+    <!-- Lista de Resultados -->
+    <div *ngIf="!selectedProvider" class="results-container">
+      <app-provider-list 
+        [searchResponse]="searchResponse"
+        [loading]="loading"
+        (sortChange)="onSortChange($event)"
+        (pageChange)="onPageChange($event)"
+        (providerSelected)="onProviderSelected($event)">
+      </app-provider-list>
+    </div>
+
+    <!-- Estado Inicial - Bem-vindo -->
+    <div *ngIf="!selectedProvider && !searchResponse?.providers?.length && !loading" class="welcome-section">
+      <div class="welcome-icon">
+        <mat-icon>location_on</mat-icon>
+      </div>
+      <h2>Bem-vindo à busca de credenciados</h2>
+      <p>Use os campos ao lado para encontrar prestadores credenciados em nossa rede.</p>
+    </div>
+  </section>
+  </div>
+</main>
+
+
