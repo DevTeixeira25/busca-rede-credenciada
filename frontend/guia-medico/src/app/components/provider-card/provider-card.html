@@ -1,0 +1,104 @@
+<mat-card class="provider-card" *ngIf="provider">
+  <!-- Cabeçalho com tipo e distância -->
+  <div class="provider-header">
+    <div class="provider-type">
+      <mat-icon class="type-icon">{{ getProviderTypeIcon(provider.type) }}</mat-icon>
+      <span class="type-label">{{ getProviderTypeLabel(provider.type) }}</span>
+    </div>
+    <div class="distance" *ngIf="distance">
+      <mat-icon>location_on</mat-icon>
+      <span>{{ distance }}</span>
+    </div>
+  </div>
+
+  <mat-card-content>
+    <!-- Nome do prestador -->
+    <h2 class="provider-name">{{ provider.name }}</h2>
+
+    <!-- Avaliação -->
+    <div class="rating" *ngIf="provider.rating">
+      <div class="stars">
+        <mat-icon *ngFor="let star of getRatingStars(provider.rating)" class="star">{{ star }}</mat-icon>
+      </div>
+      <span class="rating-value">{{ provider.rating }}/5</span>
+    </div>
+
+    <!-- Especialidades -->
+    <div class="specialties" *ngIf="provider.specialties && provider.specialties.length">
+      <div class="specialties-header">
+        <mat-icon>medical_services</mat-icon>
+        <span>Especialidades:</span>
+      </div>
+      <div class="specialty-chips">
+        <mat-chip-set>
+          <mat-chip *ngFor="let specialty of provider.specialties.slice(0, 3)">{{ specialty }}</mat-chip>
+          <mat-chip *ngIf="provider.specialties.length > 3" class="more-chip">
+            +{{ provider.specialties.length - 3 }} mais
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Endereço -->
+    <div class="address">
+      <div class="address-header">
+        <mat-icon>place</mat-icon>
+        <span>Endereço:</span>
+      </div>
+      <p class="address-text">
+        {{ provider.address.street }}, {{ provider.address.number }}<br>
+        {{ provider.address.district }} - {{ provider.address.city }}/{{ provider.address.state }}<br>
+        {{ provider.address.zipCode }}
+      </p>
+    </div>
+
+    <!-- Contato -->
+    <div class="contact" *ngIf="provider.contact">
+      <div class="contact-header">
+        <mat-icon>contact_phone</mat-icon>
+        <span>Contato:</span>
+      </div>
+      
+      <div class="contact-buttons">
+        <button mat-stroked-button 
+                *ngIf="provider.contact.phone" 
+                (click)="openPhone(provider.contact.phone)"
+                class="contact-btn phone-btn">
+          <mat-icon>phone</mat-icon>
+          {{ formatPhone(provider.contact.phone) }}
+        </button>
+        
+        <button mat-stroked-button 
+                *ngIf="provider.contact.whatsapp" 
+                (click)="openWhatsApp(provider.contact.whatsapp)"
+                class="contact-btn whatsapp-btn">
+          <mat-icon>chat</mat-icon>
+          WhatsApp
+        </button>
+        
+        <button mat-stroked-button 
+                *ngIf="provider.contact.website" 
+                (click)="openWebsite(provider.contact.website)"
+                class="contact-btn website-btn">
+          <mat-icon>language</mat-icon>
+          Website
+        </button>
+      </div>
+    </div>
+
+    <!-- Planos aceitos -->
+    <div class="plans" *ngIf="provider.plans && provider.plans.length">
+      <div class="plans-header">
+        <mat-icon>credit_card</mat-icon>
+        <span>Planos aceitos:</span>
+      </div>
+      <div class="plan-chips">
+        <mat-chip-set>
+          <mat-chip *ngFor="let plan of provider.plans" class="plan-chip">{{ plan }}</mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
