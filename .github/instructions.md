@@ -42,7 +42,7 @@ Sistema completo de busca de prestadores de saúde desenvolvido com Angular 21 e
 - Especialidades médicas variadas
 - Diferentes tipos de prestadores
 
-## Como Desenvolver
+## Informações Adicionais
 
 ### Executar o Projeto
 ```bash
