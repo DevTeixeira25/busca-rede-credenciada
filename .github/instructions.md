@@ -17,7 +17,7 @@ Sistema completo de busca de prestadores de saúde desenvolvido com Angular 21 e
 ### Backend (Node.js + Express)
 - **Localização:** `/backend/`
 - **API RESTful** com endpoints para busca e filtros
-- **Banco:** MongoDB com Mongoose
+- **Banco:** MongoDB com Mongoose (Mas pode ser utilizado em outros bancos como OracleDb que foi a implementação inicial)
 - **Modelo:** Provider com especialidades, planos, localização
 
 ## Funcionalidades Implementadas
